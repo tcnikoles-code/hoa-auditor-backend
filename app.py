@@ -1,12 +1,10 @@
 import os
-import json
-import base64
 import anthropic
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
@@ -68,8 +66,15 @@ Format your response in two clearly labeled sections:
 def health():
     return jsonify({"status": "ok"})
 
-@app.route('/audit', methods=['POST'])
+@app.route('/audit', methods=['POST', 'OPTIONS'])
 def audit():
+    if request.method == 'OPTIONS':
+        response = jsonify({'status': 'ok'})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        return response
+
     try:
         data = request.json
         address = data.get('address', 'Unknown property')
