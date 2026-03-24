@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app, origins="*")
 
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-
+print(f"API KEY LOADED: {os.environ.get('ANTHROPIC_API_KEY', 'NOT FOUND')[:20]}...")
 SYSTEM_PROMPT = """You are an expert Colorado transaction coordinator auditing HOA documents for compliance with Section 7.3 of the Colorado Contract to Buy and Sell Real Estate.
 
 The required Association Documents under Section 7.3 are:
