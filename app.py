@@ -131,7 +131,7 @@ def audit():
         if total <= MAX_SIZE_MB and len(files) <= BATCH_SIZE:
             parts = build_parts(files)
             parts.append({"type": "text", "text": note + "\n\nAudit these HOA documents against Colorado Contract Section 7.3."})
-            resp = client.messages.create(model="claude-opus-4-6", max_tokens=2000, system=SYSTEM_PROMPT, messages=[{"role": "user", "content": parts}])
+            resp = client.messages.create(model="claude-sonnet-4-6", max_tokens=2000, system=SYSTEM_PROMPT, messages=[{"role": "user", "content": parts}])
             return jsonify({"result": "".join([b.text for b in resp.content if hasattr(b, 'text')])})
 
         else:
@@ -141,11 +141,11 @@ def audit():
             for i, batch in enumerate(batches):
                 parts = build_parts(batch)
                 parts.append({"type": "text", "text": f"Batch {i+1} of {len(batches)} for {address}. What Section 7.3 HOA documents are in this batch?"})
-                resp = client.messages.create(model="claude-opus-4-6", max_tokens=1000, system=BATCH_PROMPT, messages=[{"role": "user", "content": parts}])
+                resp = client.messages.create(model="claude-sonnet-4-6", max_tokens=1000, system=BATCH_PROMPT, messages=[{"role": "user", "content": parts}])
                 findings.append(f"BATCH {i+1}:\n" + "".join([b.text for b in resp.content if hasattr(b, 'text')]))
 
             combined = "\n\n".join(findings)
-            resp = client.messages.create(model="claude-opus-4-6", max_tokens=2000, system=MERGE_PROMPT,
+            resp = client.messages.create(model="claude-sonnet-4-6", max_tokens=2000, system=MERGE_PROMPT,
                 messages=[{"role": "user", "content": f"{note}\n\nFindings from all batches:\n\n{combined}\n\nProduce the final Section 7.3 audit."}])
             return jsonify({"result": "".join([b.text for b in resp.content if hasattr(b, 'text')])})
 
